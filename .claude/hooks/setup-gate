@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""Setup gate: until AGENTS.md is configured, every prompt nags to run /setup and
+PreToolUse HARD-BLOCKS all mutating work. State lives in AGENTS.md itself — no state files."""
+import json
+import os
+import sys
+
+d = json.load(sys.stdin)
+root = os.environ.get("CLAUDE_PROJECT_DIR") or d.get("cwd", ".")
+
+# ponytail: skip the boilerplate source repo by folder name — rename it and this fires there too
+if os.path.basename(os.path.abspath(root)) == "ai-boiler-plate":
+    sys.exit(0)
+
+try:
+    text = open(os.path.join(root, "AGENTS.md")).read()
+except OSError:
+    text = ""  # no AGENTS.md = definitely not set up
+
+if "TODO" not in text and "language-agnostic boilerplate" not in text:
+    sys.exit(0)  # configured
+
+event = d.get("hook_event_name", "")
+
+if event != "PreToolUse":  # UserPromptSubmit: tell the agent why it will be blocked
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "UserPromptSubmit",
+            "additionalContext": (
+                "SETUP REQUIRED: AGENTS.md still contains the boilerplate template "
+                f"({text.count('TODO')} TODO(s)). All mutating tools are HARD-BLOCKED "
+                "until setup is done. Run the /setup skill now: interview the user and "
+                "rewrite AGENTS.md for their project."
+            ),
+        }
+    }))
+    sys.exit(0)
+
+# PreToolUse: block everything except what /setup itself needs
+tool = d.get("tool_name", "")
+ti = d.get("tool_input", {})
+
+
+def block(msg):
+    print(msg, file=sys.stderr)
+    sys.exit(2)
+
+
+if tool in ("Write", "Edit", "NotebookEdit"):
+    path = os.path.abspath(ti.get("file_path", "") or ti.get("notebook_path", ""))
+    allowed = path == os.path.join(os.path.abspath(root), "AGENTS.md") or "/.claude/" in path
+    if allowed:
+        sys.exit(0)
+    block("Blocked: setup required. Only AGENTS.md and .claude/** can be edited — run the /setup skill first.")
+
+if tool == "Bash":
+    cmd = ti.get("command", "").strip()
+    READONLY = ("git status", "git log", "git diff", "git branch",
+                "ls", "grep", "find", "cat", "head", "tail", "pwd", "wc", "which")
+    if cmd.startswith(READONLY):
+        sys.exit(0)
+    block("Blocked: setup required. Run the /setup skill first — it rewrites AGENTS.md and unlocks all tools.")
+
+block("Blocked: setup required. Run the /setup skill first.")

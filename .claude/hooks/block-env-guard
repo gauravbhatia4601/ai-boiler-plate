@@ -1,0 +1,28 @@
+#!/usr/bin/env python3
+"""PreToolUse guard: keep .env files local (AGENTS.md 'Never do')."""
+import json
+import re
+import sys
+
+d = json.load(sys.stdin)
+tool = d.get("tool_name", "")
+ti = d.get("tool_input", {})
+
+if tool == "Bash":
+    cmd = ti.get("command", "")
+    # ponytail: ignores quoted strings, so `git commit -m "fix .env docs"` passes and
+    # `git add ".env"` slips through; also blind to `git add -A` with .env on disk
+    # (.gitignore + AGENTS.md are the second layer). Per-path inspection if abuse appears.
+    stripped = re.sub(r'"[^"]*"', '""', cmd)
+    stripped = re.sub(r"'[^']*'", "''", stripped)
+    if ".env" in stripped and any(f"git {g}" in cmd for g in ("add", "commit", "push")):
+        print("Blocked: never commit .env files (AGENTS.md 'Never do').", file=sys.stderr)
+        sys.exit(2)
+elif tool in ("Write", "Edit", "NotebookEdit"):
+    path = ti.get("file_path", "") or ti.get("notebook_path", "")
+    name = path.rsplit("/", 1)[-1]
+    if name == ".env" or name.startswith(".env."):
+        print("Blocked: .env files stay local (AGENTS.md 'Never do').", file=sys.stderr)
+        sys.exit(2)
+
+sys.exit(0)
