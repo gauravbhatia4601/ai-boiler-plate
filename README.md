@@ -51,10 +51,14 @@ echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command"
 | Harness | What it gets |
 |---|---|
 | Claude Code | Everything: AGENTS.md rules, permissions, hooks, skills, plugins. |
-| Codex, Cursor, Windsurf, Zed, opencode | Reads `AGENTS.md` natively — rules only. |
+| Codex, Cursor, Windsurf, Zed, opencode, pi, Goose, Crush, Jules, Amp | Reads `AGENTS.md` natively — rules only. |
 | Gemini CLI | `GEMINI.md` → symlink to `AGENTS.md`. |
 | GitHub Copilot | `.github/copilot-instructions.md` → symlink to `AGENTS.md`. |
-| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided for `--read CONVENTIONS.md` habit). |
+| Cline | `.clinerules` → symlink to `AGENTS.md`. |
+| Roo Code | `.roorules` → symlink to `AGENTS.md`. |
+| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided for the `--read CONVENTIONS.md` habit). |
+
+opencode additionally reuses Claude Code skills from `.claude/skills/` — `/verify` and `/setup` work there too.
 
 Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as instructions — the rules still apply, just without a wall in front of them.
 
