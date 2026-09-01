@@ -46,6 +46,18 @@ printf '## Project\nMy app.\n' > AGENTS.md
 echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; echo "exit=$?"   # expect exit=0 (unlocked)
 ```
 
+## Works with
+
+| Harness | What it gets |
+|---|---|
+| Claude Code | Everything: AGENTS.md rules, permissions, hooks, skills, plugins. |
+| Codex, Cursor, Windsurf, Zed, opencode | Reads `AGENTS.md` natively — rules only. |
+| Gemini CLI | `GEMINI.md` → symlink to `AGENTS.md`. |
+| GitHub Copilot | `.github/copilot-instructions.md` → symlink to `AGENTS.md`. |
+| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided for `--read CONVENTIONS.md` habit). |
+
+Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as instructions — the rules still apply, just without a wall in front of them.
+
 ## Notes
 
 - **MCP servers**: add a `.mcp.json` in the project root when a project needs one; don't pre-add an empty one.
