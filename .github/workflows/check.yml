@@ -1,0 +1,26 @@
+name: check
+
+on: [push, pull_request]
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 -m json.tool .claude/settings.json > /dev/null
+      - name: block-env-guard blocks .env commits
+        run: |
+          echo '{"tool_name":"Bash","tool_input":{"command":"git add .env"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 2
+          echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"fix .env docs\""}}' | python3 .claude/hooks/block-env-guard; test $? -eq 0
+          echo '{"tool_name":"Write","tool_input":{"file_path":"/x/.env"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 2
+          echo '{"tool_name":"Bash","tool_input":{"command":"git add README.md"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 0
+      - name: setup-gate hard-blocks until configured
+        run: |
+          H=$GITHUB_WORKSPACE/.claude/hooks/setup-gate
+          rm -rf /tmp/gate-test && mkdir -p /tmp/gate-test && cd /tmp/gate-test
+          printf '# AGENTS.md\nA language-agnostic boilerplate that makes a new project AI-ready.\n' > AGENTS.md
+          echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; test $? -eq 2
+          echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"grep -c TODO AGENTS.md"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; test $? -eq 0
+          echo '{"prompt":"hi"}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H | grep -q "SETUP REQUIRED"
+          printf '## Project\nMy app.\n' > AGENTS.md
+          echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; test $? -eq 0
