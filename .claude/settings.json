@@ -7,10 +7,7 @@
       "Bash(git branch:*)",
       "Bash(ls:*)",
       "Bash(grep:*)",
-      "Bash(find:*)",
-      "Read(./**)",
-      "Glob(**)",
-      "Grep(**)"
+      "Bash(find:*)"
     ]
   },
   "hooks": {
