@@ -10,12 +10,14 @@ jobs:
       - run: python3 -m json.tool .claude/settings.json > /dev/null
       - name: block-env-guard blocks .env commits
         run: |
+          set +e  # blocked hooks exit 2 by design; `test` is the assertion
           echo '{"tool_name":"Bash","tool_input":{"command":"git add .env"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 2
           echo '{"tool_name":"Bash","tool_input":{"command":"git commit -m \"fix .env docs\""}}' | python3 .claude/hooks/block-env-guard; test $? -eq 0
           echo '{"tool_name":"Write","tool_input":{"file_path":"/x/.env"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 2
           echo '{"tool_name":"Bash","tool_input":{"command":"git add README.md"}}' | python3 .claude/hooks/block-env-guard; test $? -eq 0
       - name: setup-gate hard-blocks until configured
         run: |
+          set +e
           H=$GITHUB_WORKSPACE/.claude/hooks/setup-gate
           rm -rf /tmp/gate-test && mkdir -p /tmp/gate-test && cd /tmp/gate-test
           printf '# AGENTS.md\nA language-agnostic boilerplate that makes a new project AI-ready.\n' > AGENTS.md
