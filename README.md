@@ -1,46 +1,100 @@
-# AI boilerplate
+# AI Boilerplate
 
-Copy this directory into a new project and it's AI-ready on every harness: agent instructions, skills, MCP configs, and guardrails preinstalled — nothing to run, everything auto-reads.
+A folder you copy into every new project so your AI coding tool is set up from minute one — instructions, skills, and guardrails already in place. Works with every major harness: Claude Code, Codex, Cursor, Gemini CLI, pi, Windsurf, Cline, Roo Code, Copilot, opencode, Aider, Zed, Goose, and more.
 
-## Use it
+---
+
+## Start here (3 steps)
+
+**Step 1 — Copy the folder into your new project**
 
 ```sh
-cp -R ai-boiler-plate/. your-project/   # or cp -R . new-project/ from a copy of this repo
+cp -R ai-boiler-plate/. your-project/
 cd your-project
 ```
 
-Open any AI harness (Claude Code, Cursor, Codex, Gemini CLI, pi, opencode, …) in the new project. The banner at the top of `AGENTS.md` — which every harness auto-reads — orders it to interview you first (project, stack, commands, style, boundaries), rewrite the file, then run build/test/lint. No harness-specific machinery required; the flow works everywhere.
+**Step 2 — Open your AI tool and let it set itself up**
 
-## Commands this project provides
+Open any harness (Claude Code, Cursor, Codex, pi, …) in the project and type anything — even just "hi".
 
-Slash commands, available where the harness supports skills (Claude Code, opencode). Everywhere else, the `AGENTS.md` banner and rules drive the same behaviors — no commands needed.
+The top of `AGENTS.md` has a banner that tells the AI: "this project is not set up yet — interview the user first." So the AI will ask you a few questions (what the project is, which stack, which commands) and write them into `AGENTS.md`.
 
-| Command | What it does |
+**Step 3 — Start building**
+
+Once `AGENTS.md` has no `TODO`s left, the banner is gone and the AI starts normal work. From then on it follows your project's rules and runs the project's build/test/lint checks before claiming anything is done.
+
+---
+
+## The 5 skills that come with it
+
+| Skill | What it does |
 |---|---|
-| `/setup` | Interviews you and rewrites `AGENTS.md` — compulsory on first run. |
-| `/verify` | Runs build + test + lint before anything is claimed done. |
-| `/commit` | Clean one-concern-per-commit from the diff. |
-| `/docs-sync` | Checks docs against actual code, fixes drift. |
-| `/release` | Version bump + changelog from commits since the last tag. |
+| `/setup` | Interviews you, rewrites `AGENTS.md` for your project. Run first, once. |
+| `/verify` | Runs build + test + lint and reports pass/fail. Run before saying "done". |
+| `/commit` | Writes a clean, one-concern-per-commit message from your diff. |
+| `/docs-sync` | Checks that README/docs match the actual code, fixes drift. |
+| `/release` | Bumps the version and writes changelog entries from recent commits. |
 
-## What's inside
+Skills work as slash commands in Claude Code, pi, and opencode. In other harnesses the same behavior comes from the `AGENTS.md` rules — just ask for it in plain words ("verify", "commit this", "cut a release").
 
-| Path | Purpose |
+---
+
+## What is what in this repo
+
+**The instructions (read by every harness):**
+
+| File | What it is |
 |---|---|
-| `AGENTS.md` | Source of truth for all agents: project, stack, commands, style, boundaries. |
-| `CLAUDE.md` | One line that imports `AGENTS.md` into Claude Code. |
-| `.claude/settings.json` | Permission allowlist, hooks, plugins (pre-enabled), marketplace config. |
-| `.mcp.json` | Project MCP servers — ships `codebase-memory-mcp`. |
-| `.claude/hooks/block-env-guard` | PreToolUse hook: blocks committing or writing `.env` files. |
-| `.claude/hooks/setup-gate` | Until AGENTS.md is configured: every prompt nags `/setup`, and all mutating tools are hard-blocked (only AGENTS.md and `.claude/**` edits + read-only commands pass). |
-| `.claude/skills/setup/` | `/setup` skill: interviews you and rewrites AGENTS.md for your project. |
-| `.claude/skills/verify/` | `/verify` skill: run build+test+lint before claiming done. |
-| `.claude/skills/commit/` | `/commit` skill: one-concern-per-commit messages from the diff. |
-| `.claude/skills/docs-sync/` | `/docs-sync` skill: check docs against actual code, fix drift. |
-| `.claude/skills/release/` | `/release` skill: version bump + changelog from commits since last tag. |
-| `.agents/skills/` | Symlinks exposing the same skills to Codex, pi, Gemini CLI, Cursor, Roo, Cline, Windsurf. |
+| `AGENTS.md` | The rulebook. Every AI tool reads it automatically. Has a setup banner + `TODO` slots you fill once per project. |
+| `CLAUDE.md`, `GEMINI.md`, `CONVENTIONS.md`, `.github/copilot-instructions.md` | One-line pointer files (or symlinks) so each tool's expected filename loads the same `AGENTS.md`. Write rules once. |
+| `.clinerules`, `.roorules` | Same idea for Cline and Roo Code. |
 
-Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review` (Claude Code only — no other harness has plugins). The `/setup` flow installs any missing ones and tells you to restart the harness so they activate. Manual install, one command per machine:
+**The skills (behaviors you can invoke):**
+
+| Folder | What it is |
+|---|---|
+| `.claude/skills/<name>/SKILL.md` | The actual skill files. Source of truth. |
+| `.agents/skills/<name>` | Symlinks to the same skills — this is the neutral path Codex, pi, Gemini CLI, Cursor, Roo, Cline, and Windsurf read. |
+
+**The guardrails (Claude Code only — no other tool has hooks):**
+
+| File | What it is |
+|---|---|
+| `.claude/hooks/setup-gate` | Until setup is done, every prompt reminds the AI to set up first, and it cannot edit files or run commands (except the setup itself). |
+| `.claude/hooks/block-env-guard` | Always on: the AI can never commit or write `.env` files — secrets stay local. |
+| `.claude/settings.json` | Permissions (safe read-only commands pre-approved), the two hooks above, and plugins switched on. |
+
+**The MCP servers (AI-connected tools):**
+
+| File | Which tool reads it |
+|---|---|
+| `.mcp.json` | Claude Code |
+| `.cursor/mcp.json` | Cursor |
+| `.vscode/mcp.json` | VS Code / Copilot |
+| `.gemini/settings.json` | Gemini CLI |
+| `.codex/config.toml` | Codex |
+| `.roo/mcp.json` | Roo Code |
+
+All six point at one server: `codebase-memory-mcp` (indexes your codebase so the AI can search it structurally).
+
+**Extras:**
+
+| File | What it is |
+|---|---|
+| `README.md` | This file — delete it after copying if you don't want it in your project. |
+| `LICENSE` | MIT — anyone may use this boilerplate. |
+
+---
+
+## One-time installs (per machine, not per project)
+
+**The MCP server binary** (all tools need this on your PATH):
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+```
+
+**Plugins (Claude Code only):** already pre-enabled in the config — `/setup` installs any that are missing and tells you to restart. Manual install:
 
 ```sh
 claude plugin install ponytail@ponytail
@@ -48,81 +102,36 @@ claude plugin install mattpocock-skills@claude-plugins-official
 claude plugin install code-review@claude-plugins-official
 ```
 
-## MCP servers
+Notes: Windsurf and Cline configure MCP per user (no project file exists), and **pi has no MCP support by design**. Other harnesses have no plugins. Where something can't install, the `AGENTS.md` rules still apply as instructions.
 
-`codebase-memory-mcp` ships in six project-scope configs, one per harness format:
+---
 
-| File | Harness |
-|---|---|
-| `.mcp.json` | Claude Code (prompts once per project to approve) |
-| `.cursor/mcp.json` | Cursor |
-| `.vscode/mcp.json` | VS Code / GitHub Copilot |
-| `.gemini/settings.json` | Gemini CLI |
-| `.codex/config.toml` | Codex (trusted projects only) |
-| `.roo/mcp.json` | Roo Code |
-
-No project-scope MCP exists for Windsurf and Cline (user-level config only), and **pi intentionally has no MCP support at all** (its docs: no built-in MCP; the escape hatch is a hand-written TypeScript extension). Register per machine where needed. Requires the binary on your PATH — install once per machine:
+## Check it works
 
 ```sh
-curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+# .env guard: blocked (exit 2), then allowed (exit 0)
+echo '{"tool_name":"Bash","tool_input":{"command":"git add .env"}}' | python3 .claude/hooks/block-env-guard; echo $?
+echo '{"tool_name":"Bash","tool_input":{"command":"git add README.md"}}' | python3 .claude/hooks/block-env-guard; echo $?
+
+# setup gate: blocked (exit 2) while AGENTS.md is unconfigured
+echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR="$PWD" python3 .claude/hooks/setup-gate; echo $?
 ```
 
-## Verify it works
+CI runs these same checks on every push to this repo.
+
+## If the setup prompt doesn't appear
+
+1. The `AGENTS.md` banner is the universal mechanism — it works in every harness on every prompt. If the AI ignores it, say: "follow the banner at the top of AGENTS.md".
+2. The Claude Code hook loads only at session start: **restart the tool after copying the files**, and accept the folder-trust prompt.
+
+## Adding a project-specific skill later
+
+Create `.claude/skills/<name>/SKILL.md`, then expose it everywhere:
 
 ```sh
-echo '{"tool_name":"Bash","tool_input":{"command":"git add .env"}}' | python3 .claude/hooks/block-env-guard; echo "exit=$?"   # expect exit=2
-echo '{"tool_name":"Write","tool_input":{"file_path":"/x/.env"}}' | python3 .claude/hooks/block-env-guard; echo "exit=$?"    # expect exit=2
-echo '{"tool_name":"Bash","tool_input":{"command":"git add README.md"}}' | python3 .claude/hooks/block-env-guard; echo "exit=$?"  # expect exit=0
+ln -sfn "../../.claude/skills/<name>" ".agents/skills/<name>"
 ```
 
-Setup gate (fire = blocked/JSON, silent = configured):
+## License
 
-```sh
-H=<path-to-boilerplate>/.claude/hooks/setup-gate
-cd /tmp && rm -rf gate-test && mkdir -p gate-test && cd gate-test
-printf '# AGENTS.md\nA language-agnostic boilerplate that makes a new project AI-ready.\n' > AGENTS.md
-echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; echo "exit=$?"   # expect exit=2 (hard block)
-echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"grep -c TODO AGENTS.md"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; echo "exit=$?"  # expect exit=0 (read-only passes)
-echo '{"prompt":"hi"}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H   # expect SETUP REQUIRED JSON
-printf '## Project\nMy app.\n' > AGENTS.md
-echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR=/tmp/gate-test python3 $H; echo "exit=$?"   # expect exit=0 (unlocked)
-```
-
-## Works with
-
-All five skills (`/setup`, `/verify`, `/commit`, `/docs-sync`, `/release`) follow the Agent Skills standard (`SKILL.md`) and are installed **once** via `.agents/skills/` symlinks — read natively by Codex, pi, Gemini CLI, Cursor, Roo Code, Cline, and Windsurf, plus `.claude/skills/` by Claude Code, opencode, Cursor, Copilot, and Cline. No install commands needed for skills anywhere.
-
-| Harness | Extras beyond AGENTS.md + skills |
-|---|---|
-| Claude Code | Permissions, hard-block hooks, plugins (pre-enabled; `/setup` installs them). |
-| Codex | MCP via `.codex/config.toml` (trusted projects only); plugins exist but ours aren't packaged for it. |
-| Cursor | MCP via `.cursor/mcp.json`; reads `.claude/skills/` natively. |
-| Gemini CLI | `GEMINI.md` → AGENTS.md; MCP via `.gemini/settings.json`; has an extensions ecosystem (ours not packaged). |
-| VS Code / GitHub Copilot | `.github/copilot-instructions.md` → AGENTS.md; MCP via `.vscode/mcp.json`; reads `.claude/skills/` natively. |
-| pi | Skills via `.agents/skills/` (invoked `/skill:name`); **no MCP by design**. |
-| Roo Code | `.roorules` → AGENTS.md; MCP via `.roo/mcp.json`. |
-| Cline | `.clinerules` → AGENTS.md; reads `.claude/skills/` natively; MCP is user-level only. |
-| Windsurf | MCP user-level only. |
-| opencode | Reuses `.claude/skills/` and MCP discovery natively. |
-| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided). |
-| Zed, Goose, Crush, Jules, Amp | Read `AGENTS.md` natively. |
-
-Enforcement (hooks) is Claude Code-only — no other harness has a hook mechanism. Everywhere else, the AGENTS.md banner and rules are the enforcement.
-
-## Notes
-
-- **Skills**: add project-specific ones under `.claude/skills/<name>/SKILL.md` as they earn their place, then expose them to every other harness with one symlink:
-  `ln -sfn "../../.claude/skills/<name>" ".agents/skills/<name>"`
-  (`.agents/skills/` is the vendor-neutral path read by Codex, pi, Gemini CLI, Cursor, Roo, Cline, and Windsurf; `.claude/skills/` covers Claude Code and opencode.)
-
-## Troubleshooting: the setup nag didn't fire
-
-The primary layer is harness-agnostic: the banner at the top of `AGENTS.md`, which every harness auto-reads on every prompt. If an agent ignores it, say "follow the banner at the top of AGENTS.md".
-
-The optional second layer is the Claude Code hard-block hook — it exists only there, loads only at session start (**restart after copying files**), and needs the folder trusted. All other harnesses have no hook mechanism at all; the banner is their enforcement.
-
-Test the Claude hook directly in the copied project:
-
-```sh
-echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR="$PWD" python3 .claude/hooks/setup-gate; echo "exit=$?"  # expect exit=2
-```
+MIT — see [LICENSE](LICENSE).
