@@ -39,7 +39,7 @@ Slash commands, available where the harness supports skills (Claude Code, openco
 | `.claude/skills/docs-sync/` | `/docs-sync` skill: check docs against actual code, fix drift. |
 | `.claude/skills/release/` | `/release` skill: version bump + changelog from commits since last tag. |
 
-Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review`. First open of a copied project registers the marketplaces automatically; each user then installs with one command per machine:
+Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review` (Claude Code only — no other harness has plugins). The `/setup` flow installs any missing ones and tells you to restart the harness so they activate. Manual install, one command per machine:
 
 ```sh
 claude plugin install ponytail@ponytail
@@ -95,6 +95,7 @@ echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command"
 | GitHub Copilot | `.github/copilot-instructions.md` → symlink to `AGENTS.md`. |
 | Cline | `.clinerules` → symlink to `AGENTS.md`. |
 | Roo Code | `.roorules` → symlink to `AGENTS.md`. |
+| Cursor (skills) | `.cursor/rules/*.mdc` → symlinks to each `.claude/skills/*/SKILL.md` — all five skills available as rules. |
 | Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided for the `--read CONVENTIONS.md` habit). |
 
 opencode additionally reuses Claude Code skills from `.claude/skills/` — `/verify` and `/setup` work there too.
