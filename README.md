@@ -39,7 +39,7 @@ Skills work as slash commands in Claude Code, pi, and opencode. In other harness
 
 ---
 
-## What is what in this repo
+## Inside the folder
 
 **The instructions (read by every harness):**
 
