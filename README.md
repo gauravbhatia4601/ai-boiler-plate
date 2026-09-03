@@ -49,7 +49,7 @@ claude plugin install code-review@claude-plugins-official
 
 ## MCP servers
 
-`codebase-memory-mcp` ships in four project-scope configs, one per harness format:
+`codebase-memory-mcp` ships in six project-scope configs, one per harness format:
 
 | File | Harness |
 |---|---|
@@ -57,8 +57,10 @@ claude plugin install code-review@claude-plugins-official
 | `.cursor/mcp.json` | Cursor |
 | `.vscode/mcp.json` | VS Code / GitHub Copilot |
 | `.gemini/settings.json` | Gemini CLI |
+| `.codex/config.toml` | Codex (trusted projects only) |
+| `.roo/mcp.json` | Roo Code |
 
-Codex, pi, and Windsurf configure MCP at user level only — no project file exists for them; register the server once per machine. Requires the binary on your PATH — install once per machine:
+No project-scope MCP exists for Windsurf and Cline (user-level config only), and **pi intentionally has no MCP support at all** (its docs: no built-in MCP; the escape hatch is a hand-written TypeScript extension). Register per machine where needed. Requires the binary on your PATH — install once per machine:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
@@ -87,20 +89,24 @@ echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command"
 
 ## Works with
 
-| Harness | What it gets |
+All five skills (`/setup`, `/verify`, `/commit`, `/docs-sync`, `/release`) follow the Agent Skills standard (`SKILL.md`) and are installed **once** via `.agents/skills/` symlinks — read natively by Codex, pi, Gemini CLI, Cursor, Roo Code, Cline, and Windsurf, plus `.claude/skills/` by Claude Code, opencode, Cursor, Copilot, and Cline. No install commands needed for skills anywhere.
+
+| Harness | Extras beyond AGENTS.md + skills |
 |---|---|
-| Claude Code | Everything: AGENTS.md rules, permissions, hooks, skills, plugins. |
-| Codex, Cursor, Windsurf, Zed, opencode, pi, Goose, Crush, Jules, Amp | Reads `AGENTS.md` natively — rules only. |
-| Gemini CLI | `GEMINI.md` → symlink to `AGENTS.md`. |
-| GitHub Copilot | `.github/copilot-instructions.md` → symlink to `AGENTS.md`. |
-| Cline | `.clinerules` → symlink to `AGENTS.md`. |
-| Roo Code | `.roorules` → symlink to `AGENTS.md`. |
-| Cursor (skills) | `.cursor/rules/*.mdc` → symlinks to each `.claude/skills/*/SKILL.md` — all five skills available as rules. |
-| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided for the `--read CONVENTIONS.md` habit). |
+| Claude Code | Permissions, hard-block hooks, plugins (pre-enabled; `/setup` installs them). |
+| Codex | MCP via `.codex/config.toml` (trusted projects only); plugins exist but ours aren't packaged for it. |
+| Cursor | MCP via `.cursor/mcp.json`; reads `.claude/skills/` natively. |
+| Gemini CLI | `GEMINI.md` → AGENTS.md; MCP via `.gemini/settings.json`; has an extensions ecosystem (ours not packaged). |
+| VS Code / GitHub Copilot | `.github/copilot-instructions.md` → AGENTS.md; MCP via `.vscode/mcp.json`; reads `.claude/skills/` natively. |
+| pi | Skills via `.agents/skills/` (invoked `/skill:name`); **no MCP by design**. |
+| Roo Code | `.roorules` → AGENTS.md; MCP via `.roo/mcp.json`. |
+| Cline | `.clinerules` → AGENTS.md; reads `.claude/skills/` natively; MCP is user-level only. |
+| Windsurf | MCP user-level only. |
+| opencode | Reuses `.claude/skills/` and MCP discovery natively. |
+| Aider | No auto-read; start with `aider --read AGENTS.md` (`CONVENTIONS.md` symlink provided). |
+| Zed, Goose, Crush, Jules, Amp | Read `AGENTS.md` natively. |
 
-opencode additionally reuses Claude Code skills from `.claude/skills/` — `/verify` and `/setup` work there too.
-
-Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as instructions — the rules still apply, just without a wall in front of them.
+Enforcement (hooks) is Claude Code-only — no other harness has a hook mechanism. Everywhere else, the AGENTS.md banner and rules are the enforcement.
 
 ## Notes
 
