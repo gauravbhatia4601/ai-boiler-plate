@@ -1,6 +1,6 @@
 # AI boilerplate
 
-Copy this directory into a new project and it's AI-ready: instructions, permissions, and skills preconfigured for Claude Code (and anything else that reads AGENTS.md).
+Copy this directory into a new project and it's AI-ready on every harness: agent instructions, skills, MCP configs, and guardrails preinstalled — nothing to run, everything auto-reads.
 
 ## Use it
 
@@ -38,6 +38,7 @@ Slash commands, available where the harness supports skills (Claude Code, openco
 | `.claude/skills/commit/` | `/commit` skill: one-concern-per-commit messages from the diff. |
 | `.claude/skills/docs-sync/` | `/docs-sync` skill: check docs against actual code, fix drift. |
 | `.claude/skills/release/` | `/release` skill: version bump + changelog from commits since last tag. |
+| `.agents/skills/` | Symlinks exposing the same skills to Codex, pi, Gemini CLI, Cursor, Roo, Cline, Windsurf. |
 
 Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review` (Claude Code only — no other harness has plugins). The `/setup` flow installs any missing ones and tells you to restart the harness so they activate. Manual install, one command per machine:
 
@@ -110,7 +111,9 @@ Enforcement (hooks) is Claude Code-only — no other harness has a hook mechanis
 
 ## Notes
 
-- **Skills**: add project-specific ones under `.claude/skills/<name>/SKILL.md` as they earn their place.
+- **Skills**: add project-specific ones under `.claude/skills/<name>/SKILL.md` as they earn their place, then expose them to every other harness with one symlink:
+  `ln -sfn "../../.claude/skills/<name>" ".agents/skills/<name>"`
+  (`.agents/skills/` is the vendor-neutral path read by Codex, pi, Gemini CLI, Cursor, Roo, Cline, and Windsurf; `.claude/skills/` covers Claude Code and opencode.)
 
 ## Troubleshooting: the setup nag didn't fire
 
