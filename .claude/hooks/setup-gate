@@ -17,7 +17,7 @@ try:
 except OSError:
     text = ""  # no AGENTS.md = definitely not set up
 
-if "TODO" not in text and "language-agnostic boilerplate" not in text:
+if "TODO" not in text and "language-agnostic boilerplate" not in text and "UNCONFIGURED" not in text:
     sys.exit(0)  # configured
 
 event = d.get("hook_event_name", "")

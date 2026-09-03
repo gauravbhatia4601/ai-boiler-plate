@@ -102,3 +102,16 @@ Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as i
 ## Notes
 
 - **Skills**: add project-specific ones under `.claude/skills/<name>/SKILL.md` as they earn their place.
+
+## Troubleshooting: the setup nag didn't fire
+
+The nag has two independent layers — if one fails the other still works:
+
+1. **AGENTS.md banner** (all harnesses): the copied file's top banner orders `/setup` before any work. It's read automatically on every prompt. If the agent ignores it, say "run /setup".
+2. **Claude Code hook** (hard block): loads only at session start — **restart Claude Code after copying the files**, and accept the folder trust dialog (untrusted folders silently ignore settings hooks).
+
+Test the hook directly in the copied project:
+
+```sh
+echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR="$PWD" python3 .claude/hooks/setup-gate; echo "exit=$?"  # expect exit=2
+```

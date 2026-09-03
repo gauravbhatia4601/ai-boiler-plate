@@ -1,5 +1,10 @@
 # AGENTS.md — instructions for every AI agent working in this repo
 
+> **⚠ UNCONFIGURED — SETUP REQUIRED BEFORE ANY WORK**
+> This file still describes the AI boilerplate, not your project. Run `/setup` now: it interviews
+> the user and rewrites this file. When done, run `/verify`. Do not start any other work until
+> both have run. (This banner disappears once `/setup` rewrites the file.)
+
 <!-- This repo IS the boilerplate: this file doubles as the template copied into new projects. -->
 
 ## Project
