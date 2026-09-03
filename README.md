@@ -17,13 +17,28 @@ Open Claude Code in the new project and it will prompt you to run `/setup`: it i
 |---|---|
 | `AGENTS.md` | Source of truth for all agents: project, stack, commands, style, boundaries. |
 | `CLAUDE.md` | One line that imports `AGENTS.md` into Claude Code. |
-| `.claude/settings.json` | Read-only permission allowlist, hooks, and enabled plugins. |
+| `.claude/settings.json` | Permission allowlist, hooks, plugins (pre-enabled), marketplace config. |
+| `.mcp.json` | Project MCP servers — ships `codebase-memory-mcp`. |
 | `.claude/hooks/block-env-guard` | PreToolUse hook: blocks committing or writing `.env` files. |
 | `.claude/hooks/setup-gate` | Until AGENTS.md is configured: every prompt nags `/setup`, and all mutating tools are hard-blocked (only AGENTS.md and `.claude/**` edits + read-only commands pass). |
 | `.claude/skills/setup/` | `/setup` skill: interviews you and rewrites AGENTS.md for your project. |
 | `.claude/skills/verify/` | `/verify` skill: run build+test+lint before claiming done. |
 
-Plugins shipped enabled: `ponytail`, `mattpocock-skills`, `code-review`. Teammates get them on first open (they still need the marketplaces added once per machine via `/plugin`).
+Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review`. First open of a copied project registers the marketplaces automatically; each user then installs with one command per machine:
+
+```sh
+claude plugin install ponytail@ponytail
+claude plugin install mattpocock-skills@claude-plugins-official
+claude plugin install code-review@claude-plugins-official
+```
+
+## MCP servers
+
+`codebase-memory-mcp` ships in `.mcp.json` (project scope). Claude Code prompts once to approve it per project. Requires the binary on your PATH — install once per machine:
+
+```sh
+curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
+```
 
 ## Verify it works
 
@@ -64,5 +79,4 @@ Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as i
 
 ## Notes
 
-- **MCP servers**: add a `.mcp.json` in the project root when a project needs one; don't pre-add an empty one.
 - **Skills**: add project-specific ones under `.claude/skills/<name>/SKILL.md` as they earn their place.
