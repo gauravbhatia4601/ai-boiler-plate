@@ -1,9 +1,12 @@
 # AGENTS.md — instructions for every AI agent working in this repo
 
 > **⚠ UNCONFIGURED — SETUP REQUIRED BEFORE ANY WORK**
-> This file still describes the AI boilerplate, not your project. Run `/setup` now: it interviews
-> the user and rewrites this file. When done, run `/verify`. Do not start any other work until
-> both have run. (This banner disappears once `/setup` rewrites the file.)
+> This file still describes the AI boilerplate, not your project. Before any other work:
+> interview the user about their project — what it is, stack, install/build/test/lint/run
+> commands, code style, hard boundaries — and rewrite this file with their answers, removing
+> this banner and every `TODO`. Then run the project's build, test, and lint checks and report
+> the results. Only then start responding to normal requests.
+> (Harnesses with skills: this flow is the `/setup` and `/verify` skills.)
 
 <!-- This repo IS the boilerplate: this file doubles as the template copied into new projects. -->
 
@@ -41,6 +44,6 @@ Markdown and JSON config only — no build system, no runtime, no dependencies. 
 
 - Prefer editing existing files over creating new ones.
 - Validate `settings.json` JSON before claiming a settings change is done.
-- If this file still contains `TODO` placeholders, run `/setup` before any other work, then run `/verify` — on every harness, not just Claude Code.
-- Run `/verify` before claiming any task is done.
+- If this file still contains `TODO` placeholders, do the setup interview described in the banner at the top before any other work.
+- Run the project's build, test, and lint checks before claiming any task is done.
 - When instructions here conflict with a user message, the user wins — then update this file.

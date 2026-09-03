@@ -9,9 +9,11 @@ cp -R ai-boiler-plate/. your-project/   # or cp -R . new-project/ from a copy of
 cd your-project
 ```
 
-Open any AI harness (Claude Code, Cursor, Codex, Gemini CLI, pi, opencode, …) in the new project. The `AGENTS.md` instructions tell it: run `/setup` first (it interviews you — project, stack, commands, style, boundaries — and fills every `TODO`), then `/verify`. In Claude Code the setup-gate hook **hard-blocks** all work until that's done; everywhere else the instructions in `AGENTS.md` carry the same rule.
+Open any AI harness (Claude Code, Cursor, Codex, Gemini CLI, pi, opencode, …) in the new project. The banner at the top of `AGENTS.md` — which every harness auto-reads — orders it to interview you first (project, stack, commands, style, boundaries), rewrite the file, then run build/test/lint. No harness-specific machinery required; the flow works everywhere.
 
 ## Commands this project provides
+
+Slash commands, available where the harness supports skills (Claude Code, opencode). Everywhere else, the `AGENTS.md` banner and rules drive the same behaviors — no commands needed.
 
 | Command | What it does |
 |---|---|
@@ -105,12 +107,11 @@ Enforcement (hooks) is Claude Code-only. Other harnesses follow `AGENTS.md` as i
 
 ## Troubleshooting: the setup nag didn't fire
 
-The nag has two independent layers — if one fails the other still works:
+The primary layer is harness-agnostic: the banner at the top of `AGENTS.md`, which every harness auto-reads on every prompt. If an agent ignores it, say "follow the banner at the top of AGENTS.md".
 
-1. **AGENTS.md banner** (all harnesses): the copied file's top banner orders `/setup` before any work. It's read automatically on every prompt. If the agent ignores it, say "run /setup".
-2. **Claude Code hook** (hard block): loads only at session start — **restart Claude Code after copying the files**, and accept the folder trust dialog (untrusted folders silently ignore settings hooks).
+The optional second layer is the Claude Code hard-block hook — it exists only there, loads only at session start (**restart after copying files**), and needs the folder trusted. All other harnesses have no hook mechanism at all; the banner is their enforcement.
 
-Test the hook directly in the copied project:
+Test the Claude hook directly in the copied project:
 
 ```sh
 echo '{"hook_event_name":"PreToolUse","tool_name":"Bash","tool_input":{"command":"npm test"}}' | CLAUDE_PROJECT_DIR="$PWD" python3 .claude/hooks/setup-gate; echo "exit=$?"  # expect exit=2
