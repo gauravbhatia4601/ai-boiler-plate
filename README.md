@@ -23,6 +23,9 @@ Open Claude Code in the new project and it will prompt you to run `/setup`: it i
 | `.claude/hooks/setup-gate` | Until AGENTS.md is configured: every prompt nags `/setup`, and all mutating tools are hard-blocked (only AGENTS.md and `.claude/**` edits + read-only commands pass). |
 | `.claude/skills/setup/` | `/setup` skill: interviews you and rewrites AGENTS.md for your project. |
 | `.claude/skills/verify/` | `/verify` skill: run build+test+lint before claiming done. |
+| `.claude/skills/commit/` | `/commit` skill: one-concern-per-commit messages from the diff. |
+| `.claude/skills/docs-sync/` | `/docs-sync` skill: check docs against actual code, fix drift. |
+| `.claude/skills/release/` | `/release` skill: version bump + changelog from commits since last tag. |
 
 Plugins pre-enabled: `ponytail`, `mattpocock-skills`, `code-review`. First open of a copied project registers the marketplaces automatically; each user then installs with one command per machine:
 
@@ -34,7 +37,16 @@ claude plugin install code-review@claude-plugins-official
 
 ## MCP servers
 
-`codebase-memory-mcp` ships in `.mcp.json` (project scope). Claude Code prompts once to approve it per project. Requires the binary on your PATH — install once per machine:
+`codebase-memory-mcp` ships in four project-scope configs, one per harness format:
+
+| File | Harness |
+|---|---|
+| `.mcp.json` | Claude Code (prompts once per project to approve) |
+| `.cursor/mcp.json` | Cursor |
+| `.vscode/mcp.json` | VS Code / GitHub Copilot |
+| `.gemini/settings.json` | Gemini CLI |
+
+Codex, pi, and Windsurf configure MCP at user level only — no project file exists for them; register the server once per machine. Requires the binary on your PATH — install once per machine:
 
 ```sh
 curl -fsSL https://raw.githubusercontent.com/DeusData/codebase-memory-mcp/main/install.sh | bash
