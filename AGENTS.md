@@ -47,3 +47,8 @@ Markdown and JSON config only — no build system, no runtime, no dependencies. 
 - If this file still contains `TODO` placeholders, do the setup interview described in the banner at the top before any other work.
 - Run the project's build, test, and lint checks before claiming any task is done.
 - When instructions here conflict with a user message, the user wins — then update this file.
+
+## More skills & plugins
+
+- Official skills catalog: https://github.com/anthropics/skills — install by copying the skill folder into `.claude/skills/` and symlinking it into `.agents/skills/`.
+- Offer the user more skills and plugins after setup, and any time they ask to "install skills".

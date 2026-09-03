@@ -25,6 +25,19 @@ Once `AGENTS.md` has no `TODO`s left, the banner is gone and the AI starts norma
 
 ---
 
+## Want more skills or plugins?
+
+The official skills catalog lives at **https://github.com/anthropics/skills**. You don't need to visit it — the flow installs for you:
+
+1. When `/setup` finishes, it asks: *"Want more skills or plugins for this kind of work?"*
+2. If you say yes, the AI fetches the catalog, picks out the ones relevant to your project's stack, and shows you the list.
+3. You choose; it installs the picks — skills into `.claude/skills/` (+ symlinked into `.agents/skills/` so every harness sees them), plugins via `claude plugin install` (Claude Code only).
+4. If anything was installed mid-session, it tells you to restart the harness so it activates.
+
+You can do the same any time later by asking: "install more skills" — the pointer lives in `AGENTS.md` → *More skills & plugins*.
+
+---
+
 ## The 5 skills that come with it
 
 | Skill | What it does |
