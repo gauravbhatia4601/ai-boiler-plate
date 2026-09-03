@@ -30,7 +30,8 @@ if event != "PreToolUse":  # UserPromptSubmit: tell the agent why it will be blo
                 "SETUP REQUIRED: AGENTS.md still contains the boilerplate template "
                 f"({text.count('TODO')} TODO(s)). All mutating tools are HARD-BLOCKED "
                 "until setup is done. Run the /setup skill now: interview the user and "
-                "rewrite AGENTS.md for their project."
+                "rewrite AGENTS.md for their project. When AGENTS.md is configured, "
+                "run /verify to confirm the project's checks pass, then start work."
             ),
         }
     }))

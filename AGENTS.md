@@ -36,4 +36,6 @@ Markdown and JSON config only — no build system, no runtime, no dependencies. 
 
 - Prefer editing existing files over creating new ones.
 - Validate `settings.json` JSON before claiming a settings change is done.
+- If this file still contains `TODO` placeholders, run `/setup` before any other work, then run `/verify` — on every harness, not just Claude Code.
+- Run `/verify` before claiming any task is done.
 - When instructions here conflict with a user message, the user wins — then update this file.

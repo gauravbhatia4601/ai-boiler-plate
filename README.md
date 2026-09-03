@@ -9,7 +9,17 @@ cp -R ai-boiler-plate/. your-project/   # or cp -R . new-project/ from a copy of
 cd your-project
 ```
 
-Open Claude Code in the new project and it will prompt you to run `/setup`: it interviews you (project, stack, commands, style, boundaries) and fills every `TODO` in `AGENTS.md` for you. Until that's done, the AI is **hard-blocked** from doing any project work — it can only run `/setup` and edit `AGENTS.md`. After `/setup`, you're free to build whatever the project is.
+Open any AI harness (Claude Code, Cursor, Codex, Gemini CLI, pi, opencode, …) in the new project. The `AGENTS.md` instructions tell it: run `/setup` first (it interviews you — project, stack, commands, style, boundaries — and fills every `TODO`), then `/verify`. In Claude Code the setup-gate hook **hard-blocks** all work until that's done; everywhere else the instructions in `AGENTS.md` carry the same rule.
+
+## Commands this project provides
+
+| Command | What it does |
+|---|---|
+| `/setup` | Interviews you and rewrites `AGENTS.md` — compulsory on first run. |
+| `/verify` | Runs build + test + lint before anything is claimed done. |
+| `/commit` | Clean one-concern-per-commit from the diff. |
+| `/docs-sync` | Checks docs against actual code, fixes drift. |
+| `/release` | Version bump + changelog from commits since the last tag. |
 
 ## What's inside
 
